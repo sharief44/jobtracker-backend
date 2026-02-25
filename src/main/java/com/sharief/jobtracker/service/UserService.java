@@ -8,19 +8,23 @@ import org.springframework.stereotype.Service;
 import com.sharief.jobtracker.entity.Role;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.repository.UserRepository;
+import com.sharief.jobtracker.security.JwtUtil;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     
     
     public UserService(UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil) {
 this.userRepository = userRepository;
 this.passwordEncoder = passwordEncoder;
+this.jwtUtil=jwtUtil;
 }
 
     public User registerUser(User user) {
@@ -47,6 +51,5 @@ this.passwordEncoder = passwordEncoder;
             throw new RuntimeException("Invalid email or password");
         }
 
-        return "Login Successful";
-    }
+        return jwtUtil.generateToken(user.getEmail());    }
 }
