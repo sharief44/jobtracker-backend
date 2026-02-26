@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sharief.jobtracker.dto.JobResponse;
 import com.sharief.jobtracker.entity.JobApplication;
 import com.sharief.jobtracker.service.JobApplicationService;
 
@@ -27,6 +28,6 @@ public class JobApplicationController {
 	}
 	
 	@GetMapping
-	public List<JobApplication> getMyjob(){
-		return jobService.getMyJob();	}
+	public List<JobResponse> getMyjob(){
+		return jobService.getMyJobs();	}
 }
