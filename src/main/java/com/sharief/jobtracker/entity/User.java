@@ -2,8 +2,6 @@ package com.sharief.jobtracker.entity;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,76 +12,79 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	private String name;
-	
-	@Column(unique = true, nullable= false)
-	private String email;
-	
-	@JsonIgnore
-	private String password;
-	
-	@Enumerated(EnumType.STRING)
-	private Role Role;
-	
-	private LocalDateTime createdAt;
-	
-	public User() {
-		this.createdAt=LocalDateTime.now();
-	}
 
-	public Long getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    @Column(unique = true, nullable = false)
+    private String email;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private String password;
 
-	public String getEmail() {
-		return email;
-	}
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    private LocalDateTime createdAt;
 
-	public String getPassword() {
-		return password;
-	}
+    // Default constructor
+    public User() {
+        this.createdAt = LocalDateTime.now();
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    // =====================
+    // Getters and Setters
+    // =====================
 
-	public Role getRole() {
-		return Role;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setRole(Role role) {
-		Role = role;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

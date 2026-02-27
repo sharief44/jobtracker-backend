@@ -60,4 +60,55 @@ public class JobApplicationService {
 	            ))
 	            .collect(Collectors.toList());
 	}
+	//update job
+	public JobResponse updateJob(Long jobId, JobApplication updatedJob) {
+
+	    String email = SecurityContextHolder.getContext()
+	            .getAuthentication()
+	            .getName();
+
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    JobApplication existingJob = jobRepository
+	            .findByIdAndUser(jobId, user)
+	            .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
+
+	    existingJob.setCompanyName(updatedJob.getCompanyName());
+	    existingJob.setPosition(updatedJob.getPosition());
+	    existingJob.setStatus(updatedJob.getStatus());
+	    existingJob.setNotes(updatedJob.getNotes());
+	    existingJob.setAppliedDate(updatedJob.getAppliedDate());
+	    existingJob.setInterviewDate(updatedJob.getInterviewDate());
+
+	    JobApplication savedJob = jobRepository.save(existingJob);
+
+	    return new JobResponse(
+	            savedJob.getId(),
+	            savedJob.getCompanyName(),
+	            savedJob.getPosition(),
+	            savedJob.getStatus(),
+	            savedJob.getAppliedDate(),
+	            savedJob.getInterviewDate(),
+	            savedJob.getNotes(),
+	            savedJob.getCreatedAt()
+	    );
+	}
+	
+	//delete job
+	public void deleteJob(Long jobId) {
+
+	    String email = SecurityContextHolder.getContext()
+	            .getAuthentication()
+	            .getName();
+
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+
+	    JobApplication job = jobRepository
+	            .findByIdAndUser(jobId, user)
+	            .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
+
+	    jobRepository.delete(job);
+	}
 }
