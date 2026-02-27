@@ -1,114 +1,99 @@
 package com.sharief.jobtracker.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sharief.jobtracker.dto.JobResponse;
 import com.sharief.jobtracker.entity.JobApplication;
+import com.sharief.jobtracker.entity.JobStatus;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.repository.JobApplicationRepository;
 import com.sharief.jobtracker.repository.UserRepository;
 
 @Service
 public class JobApplicationService {
-	
-	private final JobApplicationRepository jobRepository;
-	private final UserRepository userRepository;
-	
-	public JobApplicationService(JobApplicationRepository jobRepository,UserRepository userRepository) {
-		this.jobRepository=jobRepository;
-		this.userRepository=userRepository;
-	}
 
-	public JobApplication addJob(JobApplication job) {
-		
-		String email = SecurityContextHolder.getContext()
-		              .getAuthentication()
-		              .getName();
-		
-		User user = userRepository.findByEmail(email)
-				.orElseThrow(()-> new RuntimeException("User not found"));
-		
-		job.setUser(user);
-		
-		return jobRepository.save(job);
-	}
-	
-	public List<JobResponse> getMyJobs() {
+    private final JobApplicationRepository jobRepository;
+    private final UserRepository userRepository;
 
-	    String email = SecurityContextHolder.getContext()
-	            .getAuthentication()
-	            .getName();
+    public JobApplicationService(JobApplicationRepository jobRepository,
+                                 UserRepository userRepository) {
+        this.jobRepository = jobRepository;
+        this.userRepository = userRepository;
+    }
 
-	    User user = userRepository.findByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+    // ✅ Create Job
+    public JobResponse addJob(JobApplication job, Long userId) {
 
-	    return jobRepository.findByUser(user)
-	            .stream()
-	            .map(job -> new JobResponse(
-	                    job.getId(),
-	                    job.getCompanyName(),
-	                    job.getPosition(),
-	                    job.getStatus(),
-	                    job.getAppliedDate(),
-	                    job.getInterviewDate(),
-	                    job.getNotes(),
-	                    job.getCreatedAt()
-	            ))
-	            .collect(Collectors.toList());
-	}
-	//update job
-	public JobResponse updateJob(Long jobId, JobApplication updatedJob) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-	    String email = SecurityContextHolder.getContext()
-	            .getAuthentication()
-	            .getName();
+        job.setUser(user);
 
-	    User user = userRepository.findByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+        JobApplication savedJob = jobRepository.save(job);
 
-	    JobApplication existingJob = jobRepository
-	            .findByIdAndUser(jobId, user)
-	            .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
+        return mapToResponse(savedJob);
+    }
 
-	    existingJob.setCompanyName(updatedJob.getCompanyName());
-	    existingJob.setPosition(updatedJob.getPosition());
-	    existingJob.setStatus(updatedJob.getStatus());
-	    existingJob.setNotes(updatedJob.getNotes());
-	    existingJob.setAppliedDate(updatedJob.getAppliedDate());
-	    existingJob.setInterviewDate(updatedJob.getInterviewDate());
+    // ✅ Pagination + Filtering
+    public Page<JobResponse> getUserJobs(Long userId,
+                                         JobStatus status,
+                                         Pageable pageable) {
 
-	    JobApplication savedJob = jobRepository.save(existingJob);
+        Page<JobApplication> jobs;
 
-	    return new JobResponse(
-	            savedJob.getId(),
-	            savedJob.getCompanyName(),
-	            savedJob.getPosition(),
-	            savedJob.getStatus(),
-	            savedJob.getAppliedDate(),
-	            savedJob.getInterviewDate(),
-	            savedJob.getNotes(),
-	            savedJob.getCreatedAt()
-	    );
-	}
-	
-	//delete job
-	public void deleteJob(Long jobId) {
+        if (status != null) {
+            jobs = jobRepository.findByUserIdAndStatus(userId, status, pageable);
+        } else {
+            jobs = jobRepository.findByUserId(userId, pageable);
+        }
 
-	    String email = SecurityContextHolder.getContext()
-	            .getAuthentication()
-	            .getName();
+        return jobs.map(this::mapToResponse);
+    }
 
-	    User user = userRepository.findByEmail(email)
-	            .orElseThrow(() -> new RuntimeException("User not found"));
+    // ✅ Update Job (Ownership Safe)
+    public JobResponse updateJob(Long jobId,
+                                 JobApplication updatedJob,
+                                 Long userId) {
 
-	    JobApplication job = jobRepository
-	            .findByIdAndUser(jobId, user)
-	            .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
+        JobApplication existingJob = jobRepository
+                .findByIdAndUserId(jobId, userId)
+                .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
 
-	    jobRepository.delete(job);
-	}
+        existingJob.setCompanyName(updatedJob.getCompanyName());
+        existingJob.setPosition(updatedJob.getPosition());
+        existingJob.setStatus(updatedJob.getStatus());
+        existingJob.setNotes(updatedJob.getNotes());
+        existingJob.setAppliedDate(updatedJob.getAppliedDate());
+        existingJob.setInterviewDate(updatedJob.getInterviewDate());
+
+        JobApplication savedJob = jobRepository.save(existingJob);
+
+        return mapToResponse(savedJob);
+    }
+
+    // ✅ Delete Job (Ownership Safe)
+    public void deleteJob(Long jobId, Long userId) {
+
+        JobApplication job = jobRepository
+                .findByIdAndUserId(jobId, userId)
+                .orElseThrow(() -> new RuntimeException("Job not found or access denied"));
+
+        jobRepository.delete(job);
+    }
+
+    // 🔥 Entity → DTO mapper
+    private JobResponse mapToResponse(JobApplication job) {
+        return new JobResponse(
+                job.getId(),
+                job.getCompanyName(),
+                job.getPosition(),
+                job.getStatus(),
+                job.getAppliedDate(),
+                job.getInterviewDate(),
+                job.getNotes(),
+                job.getCreatedAt()
+        );
+    }
 }

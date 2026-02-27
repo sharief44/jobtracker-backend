@@ -51,5 +51,10 @@ this.jwtUtil=jwtUtil;
             throw new RuntimeException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(user.getEmail());    }
+        return jwtUtil.generateToken(user.getEmail());    
+        }
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
