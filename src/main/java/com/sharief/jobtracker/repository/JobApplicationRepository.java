@@ -34,4 +34,11 @@ public interface JobApplicationRepository extends JpaRepository<JobApplication, 
     	       GROUP BY j.status
     	       """)
     	List<Object[]> countJobsByStatus(@Param("userId") Long userId);
+    	
+    	@Query("""
+    		       SELECT j.status, COUNT(j)
+    		       FROM JobApplication j
+    		       GROUP BY j.status
+    		       """)
+    		List<Object[]> countAllJobsByStatus();
 }

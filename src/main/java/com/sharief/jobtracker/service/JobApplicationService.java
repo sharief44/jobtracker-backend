@@ -122,4 +122,22 @@ public class JobApplicationService {
 
         return stats;
     }
+    public Map<JobStatus, Long> getAllJobStats() {
+
+        List<Object[]> results = jobRepository.countAllJobsByStatus();
+
+        Map<JobStatus, Long> stats = new EnumMap<>(JobStatus.class);
+
+        for (JobStatus status : JobStatus.values()) {
+            stats.put(status, 0L);
+        }
+
+        for (Object[] row : results) {
+            JobStatus status = (JobStatus) row[0];
+            Long count = (Long) row[1];
+            stats.put(status, count);
+        }
+
+        return stats;
+    }
 }
