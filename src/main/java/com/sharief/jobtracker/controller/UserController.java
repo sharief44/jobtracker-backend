@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sharief.jobtracker.dto.LoginRequest;
+import com.sharief.jobtracker.dto.LoginResponse;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.service.UserService;
 
@@ -26,9 +27,10 @@ public class UserController {
     }
     
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
         return userService.loginUser(request.getEmail(), request.getPassword());
     }
+    
     
     @GetMapping("/me")
     public String getCurrentUser() {

@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sharief.jobtracker.dto.LoginResponse;
 import com.sharief.jobtracker.entity.Role;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.repository.UserRepository;
@@ -42,7 +43,7 @@ this.jwtUtil=jwtUtil;
         return userRepository.save(user);
     }
     
-    public String loginUser(String email, String password) {
+    public LoginResponse loginUser(String email, String password) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
@@ -51,8 +52,14 @@ this.jwtUtil=jwtUtil;
             throw new RuntimeException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(user.getEmail());    
-        }
+        String token = jwtUtil.generateToken(user.getEmail());
+
+        return new LoginResponse(
+                token,
+                user.getRole().name(),
+                user.getName()
+        );
+    }
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));

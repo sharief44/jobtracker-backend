@@ -140,4 +140,7 @@ public class JobApplicationService {
 
         return stats;
     }
+    public Page<JobApplication> getAllJobs(Pageable pageable) {
+        return jobRepository.findAll(pageable);
+    }
 }
