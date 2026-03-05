@@ -98,4 +98,5 @@ public class JobApplicationController {
 
         return jobService.getJobStats(userId);
     }
+    
 }

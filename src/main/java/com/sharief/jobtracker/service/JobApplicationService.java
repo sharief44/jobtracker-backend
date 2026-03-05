@@ -143,4 +143,23 @@ public class JobApplicationService {
     public Page<JobApplication> getAllJobs(Pageable pageable) {
         return jobRepository.findAll(pageable);
     }
+ // ADMIN delete job
+    public void adminDeleteJob(Long jobId) {
+
+        JobApplication job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException("Job not found"));
+
+        jobRepository.delete(job);
+    }
+
+    // ADMIN update job status
+    public JobApplication adminUpdateStatus(Long jobId, JobStatus status) {
+
+        JobApplication job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException("Job not found"));
+
+        job.setStatus(status);
+
+        return jobRepository.save(job);
+    }
 }
