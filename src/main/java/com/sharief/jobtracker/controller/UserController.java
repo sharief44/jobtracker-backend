@@ -1,5 +1,7 @@
 package com.sharief.jobtracker.controller;
 
+import java.security.Principal;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,9 +35,11 @@ public class UserController {
     
     
     @GetMapping("/me")
-    public String getCurrentUser() {
-        return "You are authenticated!";
+    public User getCurrentUser(Principal principal) {
+
+        return userService.getUserByEmail(principal.getName());
+
+    }
     }
     
-    
-}
+   

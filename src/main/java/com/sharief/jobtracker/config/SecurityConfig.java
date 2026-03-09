@@ -1,5 +1,7 @@
 package com.sharief.jobtracker.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,6 +19,9 @@ public class SecurityConfig {
 	
 	 private final JwtAuthFilter jwtAuthFilter;
 	 
+	 @Autowired
+	 private RateLimitFilter rateLimitFilter;
+	 
 	 public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
 	        this.jwtAuthFilter = jwtAuthFilter;
 	    }
@@ -28,11 +33,15 @@ public class SecurityConfig {
 	         .cors(cors -> {}) // 🔥 enable cors
 	         .csrf(csrf -> csrf.disable())
 	         .authorizeHttpRequests(auth -> auth
-	                 .requestMatchers("/api/users/register", "/api/users/login")
+	                 .requestMatchers("/api/users/register", "/api/users/login","/v3/api-docs/**",
+	                         "/swagger-ui/**",
+	                         "/swagger-ui.html")
 	                 .permitAll()
 	                 .anyRequest().authenticated()
 	         )
+	         .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
 	         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+	    
 
 	     return http.build();
 	 }
@@ -54,4 +63,5 @@ public class SecurityConfig {
             }
         };
     }
+   
 }
