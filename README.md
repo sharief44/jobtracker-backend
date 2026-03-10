@@ -1,8 +1,10 @@
-📋 Job Tracker Backend (Spring Boot + JWT + PostgreSQL)
+# 📋 Job Tracker Backend (Spring Boot + JWT + PostgreSQL)
 
 A secure REST API for a Job Tracker application built using Spring Boot, JWT Authentication, and PostgreSQL.
 
-🚀 Features
+---
+
+## 🚀 Features
 
 ✅ User Registration
 
@@ -20,7 +22,9 @@ A secure REST API for a Job Tracker application built using Spring Boot, JWT Aut
 
 ✅ PostgreSQL Database Integration
 
-🛠 Tech Stack
+---
+
+## 🛠 Tech Stack
 
 Backend: Spring Boot
 Security: Spring Security + JWT
@@ -29,7 +33,11 @@ ORM: Hibernate / JPA
 Build Tool: Maven
 API Testing: Postman
 
-📂 Project Structure
+---
+
+## 📂 Project Structure
+
+```
 com.example.jobtracker
 │
 ├── config
@@ -42,30 +50,48 @@ com.example.jobtracker
 ├── security
 ├── service
 └── service.impl
-🔐 Authentication Flow
+```
+
+---
+
+## 🔐 Authentication Flow
 
 1️⃣ User registers
 2️⃣ User logs in
 3️⃣ JWT token is generated
 4️⃣ Token must be sent in header:
 
+```
 Authorization: Bearer <your-token>
+```
 
-All /api/jobs/** endpoints require authentication.
+All `/api/jobs/**` endpoints require authentication.
 
-📦 API Endpoints
-👤 User APIs
-Method	Endpoint	Description
-POST	/api/users/register	Register new user
-POST	/api/users/login	Login and receive JWT
-📊 Job Tracker APIs (Protected)
-Method	Endpoint	Description
-POST	/api/jobs	Create new job application
-GET	/api/jobs	Get all job applications
-GET	/api/jobs/{id}	Get job by ID
-PUT	/api/jobs/{id}	Update job application
-DELETE	/api/jobs/{id}	Delete job application
-⚙️ Setup Instructions
+---
+
+## 📦 API Endpoints
+
+###👤 User APIs
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| POST |`/api/users/register` |	Register new user|
+| POST |`/api/users/login`	| Login and receive JWT|
+
+###📊 Job Tracker APIs (Protected)
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| POST |	`/api/jobs`	| Create new job application |
+| GET	| `/api/jobs`	| Get all job applications |
+|GET	| `/api/jobs/{id}`	| Get job by ID |
+|PUT | `/api/jobs/{id}`	| Update job application |
+|DELETE	| `/api/jobs/{id}`	| Delete job application |
+
+---
+
+## ⚙️ Setup Instructions
+
 1️⃣ Clone Repository
 git clone https://github.com/sharief44/jobtracker-backend.git
 cd jobtracker-backend
