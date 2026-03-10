@@ -75,8 +75,8 @@ All `/api/jobs/**` endpoints require authentication.
 
 | Method | Endpoint | Description |
 |--------|----------|------------|
-| POST |`/api/users/register` |	Register new user|
-| POST |`/api/users/login`	| Login and receive JWT|
+| POST | `/api/users/register` |	Register new user|
+| POST | `/api/users/login`	| Login and receive JWT|
 
 ###📊 Job Tracker APIs (Protected)
 
