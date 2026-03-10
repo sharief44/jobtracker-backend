@@ -10,8 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sharief.jobtracker.dto.LoginRequest;
 import com.sharief.jobtracker.dto.LoginResponse;
+import com.sharief.jobtracker.dto.UserRegisterRequest;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.service.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -24,8 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.registerUser(user);
+    public User register(@Valid @RequestBody UserRegisterRequest request) {
+        return userService.registerUser(request);
     }
     
     @PostMapping("/login")

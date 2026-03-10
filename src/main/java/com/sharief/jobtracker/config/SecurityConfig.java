@@ -33,10 +33,15 @@ public class SecurityConfig {
 	         .cors(cors -> {}) // 🔥 enable cors
 	         .csrf(csrf -> csrf.disable())
 	         .authorizeHttpRequests(auth -> auth
-	                 .requestMatchers("/api/users/register", "/api/users/login","/v3/api-docs/**",
-	                         "/swagger-ui/**",
-	                         "/swagger-ui.html")
-	                 .permitAll()
+	        		 .requestMatchers(
+	        			        "/api/users/register",
+	        			        "/api/users/login",
+	        			        "/actuator/**",
+	        			        "/v3/api-docs/**",
+	        			        "/swagger-ui/**",
+	        			        "/swagger-ui.html"
+	        			)
+	        			.permitAll()
 	                 .anyRequest().authenticated()
 	         )
 	         .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)

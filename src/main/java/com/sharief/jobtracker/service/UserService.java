@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.sharief.jobtracker.dto.LoginResponse;
+import com.sharief.jobtracker.dto.UserRegisterRequest;
 import com.sharief.jobtracker.entity.Role;
 import com.sharief.jobtracker.entity.User;
 import com.sharief.jobtracker.repository.UserRepository;
@@ -28,17 +29,20 @@ this.passwordEncoder = passwordEncoder;
 this.jwtUtil=jwtUtil;
 }
 
-    public User registerUser(User user) {
+    public User registerUser(UserRegisterRequest request) {
 
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail());
 
         if (existingUser.isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
+        User user = new User();
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.save(user);
     }

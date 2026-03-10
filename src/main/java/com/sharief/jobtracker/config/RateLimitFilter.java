@@ -6,28 +6,30 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
-public class RateLimitFilter implements Filter {
+public class RateLimitFilter extends OncePerRequestFilter {
 
-    private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
+    // Separate buckets for login and normal APIs
+    private final Map<String, Bucket> loginBuckets = new ConcurrentHashMap<>();
+    private final Map<String, Bucket> apiBuckets = new ConcurrentHashMap<>();
 
+
+    // Login endpoint limit: 5 requests per minute
     @SuppressWarnings("deprecation")
-	private Bucket newBucket() {
+	private Bucket newLoginBucket() {
         Bandwidth limit = Bandwidth.classic(
-                10,
-                Refill.intervally(10, Duration.ofMinutes(1))
+                5,
+                Refill.intervally(5, Duration.ofMinutes(1))
         );
 
         return Bucket.builder()
@@ -35,28 +37,56 @@ public class RateLimitFilter implements Filter {
                 .build();
     }
 
-    private Bucket resolveBucket(String ip) {
-        return buckets.computeIfAbsent(ip, k -> newBucket());
+
+    // Other APIs limit: 50 requests per minute
+    @SuppressWarnings("deprecation")
+	private Bucket newApiBucket() {
+        Bandwidth limit = Bandwidth.classic(
+                50,
+                Refill.intervally(50, Duration.ofMinutes(1))
+        );
+
+        return Bucket.builder()
+                .addLimit(limit)
+                .build();
     }
 
+
+    private Bucket resolveLoginBucket(String ip) {
+        return loginBuckets.computeIfAbsent(ip, k -> newLoginBucket());
+    }
+
+    private Bucket resolveApiBucket(String ip) {
+        return apiBuckets.computeIfAbsent(ip, k -> newApiBucket());
+    }
+
+
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
-        HttpServletRequest req = (HttpServletRequest) request;
-        String ip = req.getRemoteAddr();
+        String ip = request.getRemoteAddr();
+        String path = request.getRequestURI();
 
-        Bucket bucket = resolveBucket(ip);
+        Bucket bucket;
+
+        // Apply strict limit for login endpoint
+        if (path.equals("/api/users/login")) {
+            bucket = resolveLoginBucket(ip);
+        } else {
+            bucket = resolveApiBucket(ip);
+        }
 
         if (bucket.tryConsume(1)) {
-            chain.doFilter(request, response);
+
+            filterChain.doFilter(request, response);
+
         } else {
 
-            HttpServletResponse res = (HttpServletResponse) response;
-            res.setStatus(429);
-            res.getWriter().write("Too many requests");
+            response.setStatus(429);
+            response.getWriter().write("Too many requests. Please try again later.");
         }
     }
 }
