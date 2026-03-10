@@ -23,15 +23,10 @@ A secure REST API for a Job Tracker application built using Spring Boot, JWT Aut
 🛠 Tech Stack
 
 Backend: Spring Boot
-
 Security: Spring Security + JWT
-
 Database: PostgreSQL
-
 ORM: Hibernate / JPA
-
 Build Tool: Maven
-
 API Testing: Postman
 
 📂 Project Structure
@@ -49,13 +44,10 @@ com.example.jobtracker
 └── service.impl
 🔐 Authentication Flow
 
-User registers
-
-User logs in
-
-JWT token is generated
-
-Token must be sent in header:
+1️⃣ User registers
+2️⃣ User logs in
+3️⃣ JWT token is generated
+4️⃣ Token must be sent in header:
 
 Authorization: Bearer <your-token>
 
@@ -107,7 +99,7 @@ Register a user
 
 Login to receive JWT
 
-Add JWT in Headers:
+Add JWT in headers:
 
 Authorization: Bearer <token>
 
@@ -117,15 +109,13 @@ Access job APIs
 
 Email Verification
 
-Job Application Analytics
-
 Swagger API Documentation
 
 Docker Containerization
 
 Unit & Integration Testing
 
-Cloud Deployment (AWS / GCP / Fly.io)
+Cloud Deployment
 
 CI/CD Pipeline
 
