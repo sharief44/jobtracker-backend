@@ -6,21 +6,21 @@ A secure REST API for a Job Tracker application built using Spring Boot, JWT Aut
 
 ## 🚀 Features
 
-✅ User Registration
+-✅ User Registration
 
-✅ User Login (JWT Authentication)
+-✅ User Login (JWT Authentication)
 
-✅ Create Job Applications
+-✅ Create Job Applications
 
-✅ Update Job Application Status
+-✅ Update Job Application Status
 
-✅ Delete Job Applications
+-✅ Delete Job Applications
 
-✅ View All Job Applications
+-✅ View All Job Applications
 
-✅ Secure Endpoints with JWT
+-✅ Secure Endpoints with JWT
 
-✅ PostgreSQL Database Integration
+-✅ PostgreSQL Database Integration
 
 ---
 
@@ -56,10 +56,10 @@ com.example.jobtracker
 
 ## 🔐 Authentication Flow
 
-1️⃣ User registers
-2️⃣ User logs in
-3️⃣ JWT token is generated
-4️⃣ Token must be sent in header:
+1. User registers
+2. User logs in
+3. JWT token is generated
+4. Token must be sent in header:
 
 ```
 Authorization: Bearer <your-token>
@@ -92,17 +92,25 @@ All `/api/jobs/**` endpoints require authentication.
 
 ## ⚙️ Setup Instructions
 
-1️⃣ Clone Repository
+###1️⃣ Clone Repository
+
+```bash
 git clone https://github.com/sharief44/jobtracker-backend.git
 cd jobtracker-backend
-2️⃣ Configure PostgreSQL
+```
+---
+
+###2️⃣ Configure PostgreSQL
 
 Create database:
 
+```
 jobtrackerdb
+```
 
-Update application.yml:
+Update `application.yml`:
 
+```yaml
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/jobtrackerdb
@@ -113,43 +121,59 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-3️⃣ Run Application
+```
+---
+
+##3️⃣ Run Application
+
+```bash
 mvn spring-boot:run
+```
 
 Application runs on:
 
+```
 http://localhost:8080
-🧪 Testing with Postman
+```
 
-Register a user
+##🧪 Testing with Postman
 
-Login to receive JWT
+1.Register a user
 
-Add JWT in headers:
+2.Login to receive JWT
 
+3. Add JWT in headers:
+
+```
 Authorization: Bearer <token>
+```
 
-Access job APIs
+4.Access job APIs
 
-📈 Future Improvements
+---
 
-Email Verification
+##📈 Future Improvements
 
-Swagger API Documentation
+-Email Verification
 
-Docker Containerization
+-Swagger API Documentation
 
-Unit & Integration Testing
+-Docker Containerization
 
-Cloud Deployment
+-Unit & Integration Testing
 
-CI/CD Pipeline
+-Cloud Deployment
 
-👨‍💻 Author
+-CI/CD Pipeline
+
+---
+##👨‍💻 Author
 
 Sharief Sk
 Full Stack Java Developer
 
-⭐ Support
+---
+
+##⭐ Support
 
 If you like this project, give it a ⭐ on GitHub!
