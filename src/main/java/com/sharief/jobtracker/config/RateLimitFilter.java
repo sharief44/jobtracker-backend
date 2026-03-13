@@ -19,14 +19,12 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {
 
-    // Separate buckets for login and normal APIs
     private final Map<String, Bucket> loginBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> apiBuckets = new ConcurrentHashMap<>();
 
 
-    // Login endpoint limit: 5 requests per minute
     @SuppressWarnings("deprecation")
-	private Bucket newLoginBucket() {
+    private Bucket newLoginBucket() {
         Bandwidth limit = Bandwidth.classic(
                 5,
                 Refill.intervally(5, Duration.ofMinutes(1))
@@ -38,9 +36,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
     }
 
 
-    // Other APIs limit: 50 requests per minute
     @SuppressWarnings("deprecation")
-	private Bucket newApiBucket() {
+    private Bucket newApiBucket() {
         Bandwidth limit = Bandwidth.classic(
                 50,
                 Refill.intervally(50, Duration.ofMinutes(1))
@@ -67,12 +64,21 @@ public class RateLimitFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String ip = request.getRemoteAddr();
         String path = request.getRequestURI();
+
+        // Skip Swagger & actuator endpoints
+        if (path.startsWith("/swagger-ui") ||
+            path.startsWith("/v3/api-docs") ||
+            path.startsWith("/actuator")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String ip = request.getRemoteAddr();
 
         Bucket bucket;
 
-        // Apply strict limit for login endpoint
         if (path.equals("/api/users/login")) {
             bucket = resolveLoginBucket(ip);
         } else {

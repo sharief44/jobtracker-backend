@@ -34,6 +34,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Skip Swagger & actuator endpoints
+        if (path.startsWith("/swagger-ui") ||
+            path.startsWith("/v3/api-docs") ||
+            path.startsWith("/actuator")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final String authHeader = request.getHeader("Authorization");
 
         String email = null;
@@ -54,7 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (user != null) {
 
-                // 🔥 DEBUG PRINTS
                 System.out.println("Loaded user: " + user.getEmail());
                 System.out.println("Loaded role from DB: " + user.getRole());
                 System.out.println("Setting authority: ROLE_" + user.getRole().name());
