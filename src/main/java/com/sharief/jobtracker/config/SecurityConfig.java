@@ -36,6 +36,7 @@ public class SecurityConfig {
 	        		 .requestMatchers(
 	        			        "/api/users/register",
 	        			        "/api/users/login",
+	        			        "https://job-tracker-frontend-cipbolr30-shariefsk4-fools-projects.vercel.app",
 	        			        "/actuator/**",
 	        			        "/v3/api-docs/**",
 	        			        "/swagger-ui/**",
