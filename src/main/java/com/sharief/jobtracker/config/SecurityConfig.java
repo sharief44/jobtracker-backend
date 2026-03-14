@@ -1,4 +1,3 @@
-```java
 package com.sharief.jobtracker.config;
 
 import java.util.List;
@@ -86,4 +85,4 @@ public class SecurityConfig {
         return source;
     }
 }
-```
+
