@@ -37,4 +37,3 @@ build/
 *.log
 *.class
 *.jar
-application.properties
